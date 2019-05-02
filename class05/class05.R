@@ -2,6 +2,7 @@
 #' title: "Class 5: Making Graphs"
 #' author: "Tianhao Qiu"
 #' date: "April 16th, 2019"
+#' output: github_document
 #' ---
 
 
