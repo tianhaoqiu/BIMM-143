@@ -3,6 +3,8 @@ title: "Class 9"
 author: "Tianhao Qiu"
 date: "4/30/2019"
 output: github_document
+editor_options: 
+chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
