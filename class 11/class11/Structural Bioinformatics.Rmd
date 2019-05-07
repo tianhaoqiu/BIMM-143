@@ -1,0 +1,140 @@
+---
+title: "Class11"
+author: "Tianhao Qiu"
+date: "5/7/2019"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## The PDB database
+
+The [PDB](http://www.rcsb.org/ ) is the main repository for biomolecular structure data.
+
+Contents of PDB:
+
+>Q1: Download a CSV file from the PDB site (accessible from “Analyze” -> “PDB Statistics” > “by Experimental Method and Molecular Type”. Move this CSV file into your RStudio project and determine the percentage of structures solved by X-Ray and Electron Microscopy. From the website what proportion of structures are protein? Aim to have a rendered GitHub document with working code that yields your answers.
+
+```{r}
+db <-read.csv('Data Export Summary.csv')
+head(db)
+```
+```{r}
+# Proportion data
+db$Total / sum(db$Total) * 100
+
+# Proportion (protein)
+sum(db$Proteins)/ sum(db$Total) * 100
+```
+
+>Q2: Type HIV in the PDB website search box on the home page and determine how many HIV-1 protease structures are in the current PDB?
+
+```{r}
+1157
+# see http://www.rcsb.org/pdb/results/results.do?tabtoshow=Current&qrid=2117E9DB
+```
+```{r}
+library(datapasta)
+
+temp <- data.frame(stringsAsFactors=FALSE,
+           Experimental.Method = c("Electron Microscopy", "Multi Method", "NMR",
+                                   "Other", "X-Ray", "Total"),
+                      Proteins = c(2277, 129, 11062, 256, 126880, 140604),
+                 Nucleic.Acids = c(31, 5, 1279, 4, 2012, 3331),
+            ProteinComplex = c(800, 2, 259, 6, 6547, 7614),
+                         Other = c(0, 1, 8, 13, 8, 30),
+                         Total = c(3108, 137, 12608, 279, 135447, 151579)
+        )
+
+```
+
+```{r}
+library(bio3d)
+example(plot.bio3d)
+```
+
+```{r}
+pdb <- read.pdb("1hsg")
+pdb
+attributes(pdb)
+```
+
+> Q6. How many amino acid residues are there in this pdb object and what are the two non- protein residues?
+
+``` ={r}
+198, HOH, MK1
+```
+
+>Q7. What type of R object is ?
+
+```{r}
+str(pdb$atom)
+typeof(pdb$atom)
+```
+
+
+```{r}
+head(pdb$atom)
+
+# Print a subset of $atom data for the first two atoms  
+pdb$atom[1:2, c("eleno", "elety", "x","y","z")]
+
+
+# Note that individual $atom records can also be accessed like this  
+pdb$atom$elety[1:2]
+
+# Which allows us to do the following  
+plot.bio3d(pdb$atom$b[pdb$calpha], sse=pdb, typ="l", ylab= "B-factor")
+```
+
+## Atom selection (atom.select())
+
+```{r}
+prot.pdb <- atom.select(pdb, "protein", value = T)
+ligd.pdb <- atom.select(pdb, "ligand", value = T)
+write.pdb(ligd.pdb, file ="1hsg_ligand.pdb")
+write.pdb(prot.pdb, file ="1hsg_protein.pdb")
+```
+
+```{r}
+atom.select(pdb, "ligand", value = T)
+```
+
+```{r}
+
+# Select all C-alpha atoms (return their indices)  
+ca.inds <- atom.select(pdb, "calpha") 
+ca.inds
+
+# Print details of the first few selected atoms  
+head( pdb$atom[ca.inds$atom, ] )
+
+# And selected xyz coordinates  
+head( pdb$xyz[, ca.inds$xyz] )
+
+# Select chain A 
+a.inds <- atom.select(pdb, chain="A") 
+ 
+# Select C-alphas of chain A 
+ca.inds <- atom.select(pdb, "calpha", chain="A") 
+ 
+# We can combine multiple selection criteria to return their intersection 
+cab.inds <- atom.select(pdb, elety=c("CA","CB"), chain="A", resno=10:20)
+```
+
+```{r}
+# Download some example PDB files 
+ids <- c("1TND_B","1AGR_A","1TAG_A","1GG2_A","1KJY_A","4G5Q_A") 
+files <- get.pdb(ids, split = TRUE)
+```
+
+```{r}
+# Extract and align the chains we are interested in  
+pdbs <- pdbaln(files, fit = TRUE)
+ 
+# Print to screen a summary of the 'pdbs' object  
+pdbs
+```
+
