@@ -1,12 +1,41 @@
 ---
-title: "class 12"
+title: "class 12 - Drug Design"
 author: "Tianhao Qiu"
 date: "5/9/2019"
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r}
+library(bio3d)
+file.name <- get.pdb("1hsg")
+hiv <- read.pdb(file.name)
+hiv
+```
+
+> Q1: What is the name of the two non protein resid values in this structure? What does resid correspond to and how would you get a listing of all reside values in this structure?
+
+```{r}
+# HOH, MK1
+```
+
+```{r}
+# Create ligand + protein file (two ways)
+prot1 <- trim.pdb(hiv, "protein")
+lig1  <- trim.pdb(hiv, "ligand")
+prot <- atom.select(hiv, "protein", value = T)
+lig <-  atom.select(hiv, "ligand", value = T)
+write.pdb(prot, file="1hsg_protein.pdb")
+write.pdb (lig, file="1hsg_ligand.pdb")
+```
+
+##Read all.pdbqt
+```{r}
+library(bio3d)
+res <- read.pdb("all.pdbqt", multi=TRUE)
+write.pdb(res, "results.pdb")
+```
 
