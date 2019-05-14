@@ -1,0 +1,52 @@
+---
+title: "class 13"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+How many of each genetyoe are there?
+```{r}
+MexicianGeno <- read.csv("373531-SampleGenotypes-Homo_sapiens_Variation_Sample_rs8067378.csv")
+tM <- table(MexicianGeno$Genotype..forward.strand.)
+tM / nrow(MexicianGeno) * 100
+
+```
+
+Interpret base quality in R
+```{r}
+library(seqinr)
+library(gtools)
+phred <- asc( s2c("DDDDCDEDCDDDDBBDDDCC@") ) - 33
+phred
+prob <- 10**(-phred/10)
+prob
+```
+
+```{r}
+asc( s2c("DDDDCDEDCDDDDBBDDDCC@") )
+```
+
+
+Population Scalr Analysis
+```{r}
+pData <- read.table("rs8067378_ENSG00000172057.6.txt", header = T)
+summary(pData)
+head(pData)
+```
+
+```{r}
+inds1 <- pData$geno == "G/G"
+pGG <- pData[inds1,]
+summary(pGG)
+
+inds2 <- pData$geno == "A/G"
+pAG <- pData[inds2,]
+summary(pAG)
+```
+```{r}
+boxplot(exp ~ geno, data = pData)
+```
+
