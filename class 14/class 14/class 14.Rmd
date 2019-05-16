@@ -1,0 +1,177 @@
+---
+title: "Class 14"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(BiocManager)
+library(DESeq2)
+```
+
+```{r}
+counts <- read.csv("data/airway_scaledcounts.csv", stringsAsFactors = FALSE)
+metadata <-  read.csv("data/airway_metadata.csv", stringsAsFactors = FALSE)
+```
+
+```{r}
+head(counts)
+head(metadata)
+
+# Number of genes in total
+nrow(counts)
+```
+```{r}
+View(metadata)
+```
+
+```{r}
+# Check whether names are right 
+colnames(counts) == metadata$id
+```
+
+## Section 3. Walk Through of gene expression analysis 
+```{r}
+control.inds <- metadata$dex == "control"
+control <- metadata[control.inds, ]
+control <- metadata[metadata[,"dex"]=="control",]
+head(counts[, control$id])
+control.mean <- rowSums( counts[ ,control$id] )/ length(control$id)
+names(control.mean) <- counts$ensgene
+
+treated.inds <- metadata$dex == "treated"
+treated <- metadata[treated.inds, ]
+treated <- metadata[metadata[,"dex"]=="treated",]
+head(counts[, treated$id])
+treated.mean <- rowSums( counts[ ,treated$id] )/ length(treated$id)
+```
+
+### Combine two data table
+```{r}
+meancounts <- data.frame(control.mean, treated.mean)
+colSums(meancounts)
+plot(meancounts$control.mean, meancounts$treated.mean, xlab = "Control", ylab = "Treated")
+plot(meancounts$control.mean, meancounts$treated.mean, 
+     xlab = "Control", ylab = "Treated", log = "xy")
+```
+
+### Data Transformation
+```{r}
+meancounts$log2fc <- log2(meancounts[,"treated.mean"]/meancounts[,"control.mean"])
+head(meancounts)
+
+# Remove zero
+to.rm <- unique(which(meancounts[, 1:2] == 0, arr.ind = T)[,1])
+```
+
+```{r}
+mycounts <- meancounts[-to.rm,]
+nrow(mycounts)
+```
+
+### How many genes are up in the drug treated cells
+```{r}
+up.inds <- mycounts$log2fc > 2
+sum(up.inds)
+
+down.inds <- mycounts$log2fc < -2
+sum(down.inds)
+```
+
+```{r}
+head(mycounts[up.inds,])
+```
+
+
+## 4. Adding annotation data
+```{r}
+anno <- read.csv("data/annotables_grch38.csv")
+head(anno)
+```
+```{r}
+# Use the merge function to add the annotation data
+mycounts.anno <- merge(mycounts, anno, by.x = "row.names", by.y = "ensgene")
+mycounts.anno 
+```
+
+```{r}
+library("AnnotationDbi")
+library("org.Hs.eg.db")
+```
+
+```{r}
+columns(org.Hs.eg.db)
+```
+
+### We will use the **mapIds()** function from bioconductor to add annotation data to our results
+```{r}
+mycounts$symbol <- mapIds(org.Hs.eg.db, keys = row.names(mycounts), 
+                          keytype = "ENSEMBL",
+                          column = "SYMBOL")    
+
+mycounts$entrez <- mapIds(org.Hs.eg.db,
+                     keys=row.names(mycounts),
+                     column="ENTREZID",
+                     keytype="ENSEMBL",
+                     multiVals="first")
+```
+
+```{r}
+head(mycounts)
+```
+
+## 5.DESeq2 analysis
+```{r}
+library(DESeq2)
+citation("DESeq2")
+```
+```{r}
+dds <- DESeqDataSetFromMatrix(countData= counts, 
+                              colData=metadata, 
+                              design=~dex, 
+                              tidy=TRUE)
+dds
+```
+```{r}
+dds <- DESeq(dds)
+res <- results(dds)
+head(res)
+```
+```{r}
+summary(res)
+```
+
+```{r}
+res05 <- results(dds, alpha = 0.05)
+summary(res05)
+```
+
+## Save result as a data frame
+```{r}
+res01 <- as.data.frame(results(dds, alpha = 0.01))
+head(res01)
+```
+
+## Sort results by the adjusted p-value
+```{r}
+x <- c(5,4,1,2)
+x[order(x)]
+
+ord.inds <- order(res01$padj)
+write.csv(res01[ord.inds,], file = "signif01_results.csv")
+```
+
+## 6. Data Visualization (Volcano Plot)
+```{r}
+mycols <- rep("gray", nrow(res01))
+mycols[res01$padj < 0.01] <- "black"
+#mycols[abs(res01$log2FoldChange) > 2] <- "blue"
+mycols[(res01$padj < 0.01) & (abs(res01$log2FoldChange) > 2)] <- "red"
+
+plot(res01$log2FoldChange, -log(res01$padj), xlab = "-log Fold Change (Drug/Control)",
+     ylab = "-log p-value", col = mycols)
+```
+
