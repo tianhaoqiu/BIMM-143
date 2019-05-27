@@ -7,3 +7,31 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r}
+library(bio3d)
+library(pheatmap)
+```
+
+```{r}
+# Read alignment
+aln <- read.fasta("Q7.fst")
+aln
+```
+## Q7 Generate heatmap with a sequence identity matrix
+```{r}
+ide <- seqidentity(aln)
+mide <- as.matrix(ide)
+```
+
+```{r}
+heatmap(mide, margins = c(10, 10), cexRow = 0.7, cexCol = 0.7)
+```
+
+## Q8 From alignment sequences to top hits protein structures 
+```{r}
+conSeq <- consensus(aln, cutoff = 0.6)
+typeof(conSeq)
+seq1 <- get.seq(conSeq)
+blast.pdb(seq1)
+```
+
