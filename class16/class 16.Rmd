@@ -1,0 +1,26 @@
+---
+title: "class 16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+i <- read.delim("mm-second.x.zebrafish.tsv")
+names(i) <- c("qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "evalue", "bitscore")
+i
+```
+```{r}
+hist(i$bitscore, breaks = 30)
+```
+```{r}
+## Asuming your blast results are stored in an object called 'b'
+plot(i$pident  * (i$qend - i$qstart), i$bitscore)
+```
+```{r}
+library(ggplot2)
+ggplot(i, aes(pident, bitscore)) + geom_point(alpha=0.1) 
+```
+
