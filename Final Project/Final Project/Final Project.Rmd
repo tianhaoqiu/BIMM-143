@@ -29,8 +29,22 @@ heatmap(mide, margins = c(10, 10), cexRow = 0.7, cexCol = 0.7)
 
 ## Q8 From alignment sequences to top hits protein structures 
 ```{r}
-con <- consensus(aln, cutoff = 0.6)
-print(con$seq)
-blast.pdb(con$seq)
+#con <- consensus(aln, cutoff = 0.6)
+#print(con$seq)
+#rowSums(mide)
+```
+```{r}
+bs <- read.fasta("aaa.fst")
+blastbs <- blast.pdb(bs)
+blastbs
+```
+```{r}
+pdb.annotate("2A79")
+pdb.annotate("3LUT")
+pdb.annotate("2R9R")
+```
+
+```{r}
+plot.blast(blastbs)
 ```
 
