@@ -39,9 +39,12 @@ blastbs <- blast.pdb(bs)
 blastbs
 ```
 ```{r}
-pdb.annotate("2A79")
-pdb.annotate("3LUT")
-pdb.annotate("2R9R")
+table1 <- pdb.annotate("2A79")
+table2 <- pdb.annotate("3LUT")
+table3 <- pdb.annotate("2R9R")
+table1$source
+table2$source
+table3$source
 ```
 
 ```{r}
