@@ -16,14 +16,14 @@ This is my classwork from [BIMM143 Spring 2019](https://bioboot.github.io/bimm14
 
 - class 12: [Bioinformatics in drug discovery and design ](https://github.com/tianhaoqiu/BIMM-143/blob/master/class%2012/class%2012/class_12.md)
 
-- class 13: [Genome informatics and high throughput sequencing (Part 1) ](https://github.com/tianhaoqiu/BIMM-143/blob/master/class%2013/class%2013/class_13.md)
+- class 13: [Genome informatics and high throughput sequencing](https://github.com/tianhaoqiu/BIMM-143/blob/master/class%2013/class%2013/class_13.md)
 
 - class 14: [Transcriptomics and the analysis of RNA-Seq data ](https://github.com/tianhaoqiu/BIMM-143/blob/master/class%2014/class%2014/class_14.md)
 
 - class 15: [Genome annotation and the interpretation of gene lists ](https://github.com/tianhaoqiu/BIMM-143/blob/master/class%2015/class%2015/class_15.md)
 
-- class 16: []()
+- class 16: [Essential UNIX for bioinformatics ](https://github.com/tianhaoqiu/BIMM-143/blob/master/class16/class_16.md)
 
 - class 17: [Biological network analysis ](https://github.com/tianhaoqiu/BIMM-143/blob/master/class%2017/class%2017/class_17.md)
 
--class 18: [Cancer genomics](https://github.com/tianhaoqiu/BIMM-143/blob/master/class%2018/class%2018/class_18.md)
+- class 18: [Cancer genomics](https://github.com/tianhaoqiu/BIMM-143/blob/master/class%2018/class%2018/class_18.md)
