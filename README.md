@@ -4,4 +4,4 @@ This is my classwork from [BIMM143 Spring 2019](https://bioboot.github.io/bimm14
 
 -class 05: R basics, data structures and data inout
 -class 06: R graphics. generating plots with R
--class 07: Up
+-class 07: Update
